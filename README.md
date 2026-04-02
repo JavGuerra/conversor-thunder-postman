@@ -50,8 +50,8 @@ Este script de Node.js permite convertir colecciones exportadas desde **Thunder 
    node convertir-thunder-a-postman.js <archivo_thunder.json> <nombre_destino.json>
    ```
 
-Ejemplo:
-
+   Ejemplo:
+   
    ```bash
    node convertir-thunder-a-postman.js prueba-thunder.json coleccion-postman.json
    ```
