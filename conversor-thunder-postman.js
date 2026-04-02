@@ -110,15 +110,15 @@ function extraerTodasLasPeticiones(obj, recorrido = false, procesados = new Set(
 }
 
 // Función de mapeo de peticiones individuales
-function convertirPeticion(tReq) {
-  var reqName = tReq.name || (tReq.request && tReq.request.name) || 'Petición';
-  var method = tReq.method || (tReq.request && tReq.request.method) || 'GET';
-  var urlString = tReq.url || (tReq.request && tReq.request.url) || '';
+  function convertirPeticion(tReq) {
+  var reqName = (tReq.name || (tReq.request && tReq.request.name) || 'Petición').trim();
+  var method = (tReq.method || (tReq.request && tReq.request.method) || 'GET').trim().toUpperCase();
+  var urlString = (tReq.url || (tReq.request && tReq.request.url) || '').trim();
 
   var req = {
     name: reqName,
     request: {
-      method: method.toUpperCase(),
+      method: method,
       header: [],
       body: undefined,
       url: { raw: urlString, host: [], path: [] }
@@ -148,10 +148,11 @@ function convertirPeticion(tReq) {
   // Procesar headers
   var headers = asegurarArray(tReq.headers || (tReq.request && tReq.request.headers));
   headers.forEach(function(h) {
-    var key = h.name || h.key || '';
-    var value = (h.value === undefined) ? '' : h.value;
-    if (key) req.request.header.push({ key: key, value: String(value), type: "text" });
+    var key = (h.name || h.key || '').trim();
+    var value = (h.value === undefined) ? '' : String(h.value).trim();
+    if (key) req.request.header.push({ key: key, value: value, type: "text" });
   });
+
 
   // Procesar autenticación (Bearer, Basic y API Key)
   var auth = tReq.auth || (tReq.request && tReq.request.auth);
