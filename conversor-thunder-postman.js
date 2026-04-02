@@ -21,14 +21,31 @@ function asegurarArray(v) {
   return Array.isArray(v) ? v : (v ? [v] : []);
 }
 
-// Función para extraer TODAS las peticiones de cualquier lugar del objeto
-function extraerTodasLasPeticiones(obj, recorrido = false) {
+// Función para extraer TODAS las peticiones de cualquier lugar del objeto sin duplicados
+function extraerTodasLasPeticiones(obj, recorrido = false, procesados = new Set()) {
   var peticiones = [];
   
-  // Si es un array, recorrer cada elemento
+  if (!obj || typeof obj !== 'object') return [];
+  
+  // Si es un array
   if (Array.isArray(obj)) {
     obj.forEach(function(item) {
-      peticiones = peticiones.concat(extraerTodasLasPeticiones(item, true));
+      // Si parece una petición (tiene método o URL)
+      if (item && (item.method || item.url || (item.request && (item.request.method || item.request.url)))) {
+        // Usar una clave única para evitar duplicados
+        var clave = JSON.stringify({
+          name: item.name,
+          method: item.method || (item.request && item.request.method),
+          url: item.url || (item.request && item.request.url)
+        });
+        if (!procesados.has(clave)) {
+          procesados.add(clave);
+          peticiones.push(item);
+        }
+      } else {
+        // Si no es petición, buscar dentro
+        peticiones = peticiones.concat(extraerTodasLasPeticiones(item, true, procesados));
+      }
     });
     return peticiones;
   }
@@ -41,12 +58,18 @@ function extraerTodasLasPeticiones(obj, recorrido = false) {
     posiblesArrays.forEach(function(prop) {
       if (obj[prop] && Array.isArray(obj[prop])) {
         obj[prop].forEach(function(item) {
-          // Si el item tiene método o URL, es una petición
-          if (item.method || item.url || (item.request && (item.request.method || item.request.url))) {
-            peticiones.push(item);
+          if (item && (item.method || item.url || (item.request && (item.request.method || item.request.url)))) {
+            var clave = JSON.stringify({
+              name: item.name,
+              method: item.method || (item.request && item.request.method),
+              url: item.url || (item.request && item.request.url)
+            });
+            if (!procesados.has(clave)) {
+              procesados.add(clave);
+              peticiones.push(item);
+            }
           } else {
-            // Si no, podría ser una carpeta con más peticiones
-            peticiones = peticiones.concat(extraerTodasLasPeticiones(item, true));
+            peticiones = peticiones.concat(extraerTodasLasPeticiones(item, true, procesados));
           }
         });
       }
@@ -54,12 +77,20 @@ function extraerTodasLasPeticiones(obj, recorrido = false) {
     
     // Buscar propiedades que contengan "request" en el nombre
     for (var key in obj) {
-      if (key.toLowerCase().includes('request') && Array.isArray(obj[key])) {
+      if (key.toLowerCase().includes('request') && Array.isArray(obj[key]) && !posiblesArrays.includes(key)) {
         obj[key].forEach(function(item) {
-          if (item.method || item.url || (item.request && (item.request.method || item.request.url))) {
-            peticiones.push(item);
+          if (item && (item.method || item.url || (item.request && (item.request.method || item.request.url)))) {
+            var clave = JSON.stringify({
+              name: item.name,
+              method: item.method || (item.request && item.request.method),
+              url: item.url || (item.request && item.request.url)
+            });
+            if (!procesados.has(clave)) {
+              procesados.add(clave);
+              peticiones.push(item);
+            }
           } else {
-            peticiones = peticiones.concat(extraerTodasLasPeticiones(item, true));
+            peticiones = peticiones.concat(extraerTodasLasPeticiones(item, true, procesados));
           }
         });
       }
@@ -69,7 +100,7 @@ function extraerTodasLasPeticiones(obj, recorrido = false) {
     if (recorrido) {
       for (var key in obj) {
         if (obj[key] && typeof obj[key] === 'object' && key !== 'request' && !key.toLowerCase().includes('request')) {
-          peticiones = peticiones.concat(extraerTodasLasPeticiones(obj[key], true));
+          peticiones = peticiones.concat(extraerTodasLasPeticiones(obj[key], true, procesados));
         }
       }
     }
