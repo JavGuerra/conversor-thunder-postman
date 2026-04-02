@@ -28,7 +28,6 @@ Este script de Node.js permite convertir colecciones exportadas desde **Thunder 
 
 **Estadísticas detalladas**: Muestra el número total de peticiones y carpetas convertidas al finalizar el proceso.
 
-
 ## Limitaciones
 
 **Autenticación OAuth 2.0, AWS Signature y Digest**: Este conversor no procesa estos tipos de autenticación. Si los utilizabas en Thunder Client, deberás configurarlos manualmente en Postman o Bruno tras la importación.
@@ -49,8 +48,10 @@ Este script de Node.js permite convertir colecciones exportadas desde **Thunder 
 
    ```bash
    node convertir-thunder-a-postman.js <archivo_thunder.json> <nombre_destino.json>
+   ```
 
-   Ejemplo: node convertir-thunder-a-postman.js thunder-requests.json coleccion-postman.json
+   ```bash
+   Ejemplo: node convertir-thunder-a-postman.js prueba-thunder.json coleccion-postman.json
    ```
 
 ## Importación
