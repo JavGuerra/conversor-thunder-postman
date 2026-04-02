@@ -256,13 +256,15 @@ function convertirThunder(t) {
     return f.parentId !== undefined || f._parentId !== undefined;
   });
   
+  var finalItems;
+  
   // Si NO hay IDs, usar fallback (método original)
   if (!hasIds) {
     var rootRequests = allRequests.filter(function(r) {
       return !r.folderId && !r.containerId;
     });
     
-    var finalItems = rootRequests.map(convertirPeticion);
+    finalItems = rootRequests.map(convertirPeticion);
     
     // Procesar carpetas como grupos (si hay carpetas definidas)
     if (Array.isArray(t.collections) && t.collections.length) {
@@ -275,60 +277,52 @@ function convertirThunder(t) {
         }
       });
     }
+  } else {
+    // ==============================================
+    // MÉTODO PRINCIPAL: Recursivo con IDs
+    // Soporta carpetas anidadas (subcarpetas)
+    // ==============================================
     
-    return {
-      info: {
-        name: collName,
-        _postman_id: t.collectionId || "",
-        schema: "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-      },
-      item: finalItems
-    };
+    /**
+     * Función recursiva para construir la estructura de Postman
+     * @param {string|null} parentId - ID de la carpeta actual (null para raíz)
+     */
+    function construirNivel(parentId) {
+      var items = [];
+      
+      // A. Agregar Subcarpetas: Buscamos carpetas cuyo parentId coincida
+      var subFolders = allFolders.filter(function(f) {
+        return (f.parentId || f._parentId || null) === parentId;
+      });
+      
+      subFolders.forEach(function(f) {
+        var folderId = f._id || f.id;
+        var folderItem = {
+          name: f.name || 'Carpeta',
+          item: construirNivel(folderId) // Llamada recursiva
+        };
+        // Solo añadimos la carpeta si tiene contenido
+        if (folderItem.item.length > 0) items.push(folderItem);
+      });
+      
+      // B. Agregar Peticiones: Buscamos peticiones en este nivel
+      var folderRequests = allRequests.filter(function(r) {
+        var rParentId = r.folderId || r.containerId || null;
+        return rParentId === parentId;
+      });
+      
+      folderRequests.forEach(function(r) {
+        items.push(convertirPeticion(r));
+      });
+      
+      return items;
+    }
+    
+    // Iniciar la recursión desde la raíz (null)
+    finalItems = construirNivel(null);
   }
   
-  // ==============================================
-  // MÉTODO PRINCIPAL: Recursivo con IDs
-  // Soporta carpetas anidadas (subcarpetas)
-  // ==============================================
-  
-  /**
-   * Función recursiva para construir la estructura de Postman
-   * @param {string|null} parentId - ID de la carpeta actual (null para raíz)
-   */
-  function construirNivel(parentId) {
-    var items = [];
-    
-    // A. Agregar Subcarpetas: Buscamos carpetas cuyo parentId coincida
-    var subFolders = allFolders.filter(function(f) {
-      return (f.parentId || f._parentId || null) === parentId;
-    });
-    
-    subFolders.forEach(function(f) {
-      var folderId = f._id || f.id;
-      var folderItem = {
-        name: f.name || 'Carpeta',
-        item: construirNivel(folderId) // Llamada recursiva
-      };
-      // Solo añadimos la carpeta si tiene contenido
-      if (folderItem.item.length > 0) items.push(folderItem);
-    });
-    
-    // B. Agregar Peticiones: Buscamos peticiones en este nivel
-    var folderRequests = allRequests.filter(function(r) {
-      var rParentId = r.folderId || r.containerId || null;
-      return rParentId === parentId;
-    });
-    
-    folderRequests.forEach(function(r) {
-      items.push(convertirPeticion(r));
-    });
-    
-    return items;
-  }
-  
-  // Iniciar la recursión desde la raíz (null)
-  var finalItems = construirNivel(null);
-  
+  // RETURN ÚNICO (sin duplicar código)
   return {
     info: {
       name: collName,
