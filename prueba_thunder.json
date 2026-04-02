@@ -1,0 +1,347 @@
+{
+  "collectionName": "Thunder Client Test",
+  "collectionId": "test-collection",
+  "collections": [
+    {
+      "_id": "carpeta-auth",
+      "id": "carpeta-auth",
+      "name": "01 Autenticación",
+      "parentId": null
+    },
+    {
+      "_id": "carpeta-users",
+      "id": "carpeta-users",
+      "name": "02 Usuarios",
+      "parentId": null
+    },
+    {
+      "_id": "subcarpeta-crud",
+      "id": "subcarpeta-crud",
+      "name": "03 CRUD Operations",
+      "parentId": "carpeta-users"
+    },
+    {
+      "_id": "carpeta-files",
+      "id": "carpeta-files",
+      "name": "04 Archivos",
+      "parentId": null
+    },
+    {
+      "_id": "carpeta-variables",
+      "id": "carpeta-variables",
+      "name": "05 Variables y Entornos",
+      "parentId": null
+    },
+    {
+      "_id": "subcarpeta-nested",
+      "id": "subcarpeta-nested",
+      "name": "06 Nivel 2 - Anidada",
+      "parentId": "carpeta-variables"
+    },
+    {
+      "_id": "subcarpeta-deep",
+      "id": "subcarpeta-deep",
+      "name": "07 Nivel 3 - Profunda",
+      "parentId": "subcarpeta-nested"
+    }
+  ],
+  "requests": [
+    {
+      "name": "01 Bearer Token - Perfil",
+      "method": "GET",
+      "url": "https://api.ejemplo.com/v1/me",
+      "auth": {
+        "type": "bearer",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "X-Client-Version", "value": "1.0.0" }
+      ]
+    },
+    {
+      "name": "02 Basic Auth - Login",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/auth/login",
+      "auth": {
+        "type": "basic",
+        "username": "admin",
+        "password": "secret123"
+      },
+      "body": {
+        "mode": "raw",
+        "raw": "{\"grant_type\":\"password\",\"scope\":\"api\"}",
+        "mimeType": "application/json"
+      }
+    },
+    {
+      "name": "03 API Key - Header",
+      "method": "GET",
+      "url": "https://api.ejemplo.com/v1/products",
+      "auth": {
+        "type": "apikey",
+        "key": "X-API-Key",
+        "value": "prod_abc123xyz789",
+        "addTo": "header"
+      }
+    },
+    {
+      "name": "04 API Key - Query Param",
+      "method": "GET",
+      "url": "https://api.ejemplo.com/v1/search",
+      "auth": {
+        "type": "apikey",
+        "key": "api_key",
+        "value": "search_key_2024",
+        "addTo": "query"
+      }
+    },
+    {
+      "name": "05 JSON Body con resaltado",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/v1/users",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"name\": \"María García\",\n  \"email\": \"maria@ejemplo.com\",\n  \"age\": 28,\n  \"roles\": [\"admin\", \"editor\"],\n  \"active\": true,\n  \"profile\": {\n    \"avatar\": \"https://ejemplo.com/avatar.jpg\",\n    \"bio\": \"Desarrolladora full-stack\"\n  }\n}",
+        "mimeType": "application/json"
+      }
+    },
+    {
+      "name": "06 Formdata con texto",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/form/contact",
+      "body": {
+        "mode": "formdata",
+        "form": [
+          { "name": "name", "value": "Carlos López" },
+          { "name": "email", "value": "carlos@ejemplo.com" },
+          { "name": "subject", "value": "Consulta sobre API" },
+          { "name": "message", "value": "Me gustaría saber más sobre el producto" }
+        ]
+      }
+    },
+    {
+      "name": "07 Formdata con archivo",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/upload",
+      "body": {
+        "mode": "formdata",
+        "form": [
+          { "name": "avatar", "type": "file", "value": "@/Users/test/Documents/foto_perfil.png" },
+          { "name": "document", "type": "file", "value": "C:\\Users\\test\\Documents\\cv_2024.pdf" },
+          { "name": "description", "value": "Documentos de usuario" }
+        ]
+      }
+    },
+    {
+      "name": "08 Urlencoded",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/oauth/token",
+      "headers": [
+        { "name": "Content-Type", "value": "application/x-www-form-urlencoded" }
+      ],
+      "body": {
+        "mode": "urlencoded",
+        "urlencoded": [
+          { "name": "grant_type", "value": "client_credentials" },
+          { "name": "client_id", "value": "my_client_id" },
+          { "name": "client_secret", "value": "my_secret_key" }
+        ]
+      }
+    }
+  ],
+  "requests_carpeta_auth": [
+    {
+      "name": "09 Refresh Token",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/auth/refresh",
+      "auth": {
+        "type": "bearer",
+        "token": "refresh_token_abc123"
+      },
+      "folderId": "carpeta-auth",
+      "containerId": "carpeta-auth"
+    },
+    {
+      "name": "10 Logout",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/auth/logout",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{access_token}}" }
+      ],
+      "folderId": "carpeta-auth",
+      "containerId": "carpeta-auth"
+    },
+    {
+      "name": "11 Change Password",
+      "method": "PUT",
+      "url": "https://api.ejemplo.com/auth/password",
+      "auth": {
+        "type": "basic",
+        "username": "{{username}}",
+        "password": "{{old_password}}"
+      },
+      "body": {
+        "mode": "raw",
+        "raw": "{\"new_password\":\"{{new_password}}\"}",
+        "mimeType": "application/json"
+      },
+      "folderId": "carpeta-auth",
+      "containerId": "carpeta-auth"
+    }
+  ],
+  "requests_carpeta_users": [
+    {
+      "name": "12 Listar usuarios",
+      "method": "GET",
+      "url": "https://api.ejemplo.com/v1/users?page=1&limit=20",
+      "folderId": "carpeta-users",
+      "containerId": "carpeta-users"
+    },
+    {
+      "name": "13 Crear usuario",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/v1/users",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\"name\":\"Nuevo Usuario\",\"email\":\"nuevo@ejemplo.com\",\"role\":\"user\"}",
+        "mimeType": "application/json"
+      },
+      "folderId": "carpeta-users",
+      "containerId": "carpeta-users"
+    },
+    {
+      "name": "14 Obtener usuario por ID",
+      "method": "GET",
+      "url": "https://api.ejemplo.com/v1/users/{{userId}}",
+      "folderId": "subcarpeta-crud",
+      "containerId": "subcarpeta-crud"
+    },
+    {
+      "name": "15 Actualizar usuario",
+      "method": "PUT",
+      "url": "https://api.ejemplo.com/v1/users/{{userId}}",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\"name\":\"Actualizado\",\"email\":\"actualizado@ejemplo.com\"}",
+        "mimeType": "application/json"
+      },
+      "folderId": "subcarpeta-crud",
+      "containerId": "subcarpeta-crud"
+    },
+    {
+      "name": "16 Eliminar usuario",
+      "method": "DELETE",
+      "url": "https://api.ejemplo.com/v1/users/{{userId}}",
+      "folderId": "subcarpeta-crud",
+      "containerId": "subcarpeta-crud"
+    },
+    {
+      "name": "17 Búsqueda de usuarios",
+      "method": "GET",
+      "url": "https://api.ejemplo.com/v1/users/search?q={{query}}",
+      "folderId": "carpeta-users",
+      "containerId": "carpeta-users"
+    }
+  ],
+  "requests_carpeta_files": [
+    {
+      "name": "18 Upload imagen perfil",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/upload/image",
+      "body": {
+        "mode": "formdata",
+        "form": [
+          { "name": "file", "type": "file", "value": "@/Users/test/Photos/avatar.jpg" },
+          { "name": "type", "value": "avatar" },
+          { "name": "width", "value": "200" }
+        ]
+      },
+      "folderId": "carpeta-files",
+      "containerId": "carpeta-files"
+    },
+    {
+      "name": "19 Upload documento",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/upload/document",
+      "body": {
+        "mode": "formdata",
+        "form": [
+          { "name": "document", "type": "file", "value": "C:\\Users\\test\\Documents\\reporte_2024.pdf" },
+          { "name": "type", "value": "report" },
+          { "name": "description", "value": "Reporte anual 2024" }
+        ]
+      },
+      "folderId": "carpeta-files",
+      "containerId": "carpeta-files"
+    },
+    {
+      "name": "20 Upload múltiple",
+      "method": "POST",
+      "url": "https://api.ejemplo.com/upload/multiple",
+      "body": {
+        "mode": "formdata",
+        "form": [
+          { "name": "files", "type": "file", "value": "@/Users/test/Photos/1.jpg" },
+          { "name": "files", "type": "file", "value": "@/Users/test/Photos/2.png" },
+          { "name": "files", "type": "file", "value": "@/Users/test/Photos/3.gif" },
+          { "name": "batch_id", "value": "batch_20240402" }
+        ]
+      },
+      "folderId": "carpeta-files",
+      "containerId": "carpeta-files"
+    }
+  ],
+  "requests_carpeta_variables": [
+    {
+      "name": "21 URL con múltiples variables",
+      "method": "GET",
+      "url": "https://{{baseUrl}}/api/{{version}}/users/{{userId}}/posts/{{postId}}",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" },
+        { "name": "X-Tenant", "value": "{{tenantId}}" }
+      ],
+      "folderId": "carpeta-variables",
+      "containerId": "carpeta-variables"
+    },
+    {
+      "name": "22 Body con variables",
+      "method": "POST",
+      "url": "https://{{baseUrl}}/api/{{version}}/orders",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"customerId\": \"{{customerId}}\",\n  \"amount\": {{amount}},\n  \"currency\": \"{{currency}}\",\n  \"timestamp\": \"{{timestamp}}\"\n}",
+        "mimeType": "application/json"
+      },
+      "folderId": "carpeta-variables",
+      "containerId": "carpeta-variables"
+    },
+    {
+      "name": "23 Nivel 2 - Variable en subcarpeta",
+      "method": "GET",
+      "url": "https://{{baseUrl}}/api/{{version}}/reports",
+      "folderId": "subcarpeta-nested",
+      "containerId": "subcarpeta-nested"
+    },
+    {
+      "name": "24 Nivel 3 - Profundo",
+      "method": "GET",
+      "url": "https://{{baseUrl}}/api/{{version}}/audit/logs",
+      "folderId": "subcarpeta-deep",
+      "containerId": "subcarpeta-deep"
+    }
+  ]
+}
