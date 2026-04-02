@@ -258,7 +258,7 @@ function convertirThunder(t) {
   
   var finalItems;
   
-  // Si NO hay IDs, usar fallback (método original)
+  // Si NO hay IDs, usar fallback
   if (!hasIds) {
     var rootRequests = allRequests.filter(function(r) {
       return !r.folderId && !r.containerId;
@@ -322,7 +322,6 @@ function convertirThunder(t) {
     finalItems = construirNivel(null);
   }
   
-  // RETURN ÚNICO (sin duplicar código)
   return {
     info: {
       name: collName,
